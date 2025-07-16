@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: payment-service
+          image: eliazulai29/company1-payment-service:latest
           ports:
             - containerPort: 3000
