@@ -1,82 +1,251 @@
-# Payment Service
+# Project Setup Guide
 
-The Payment Service is a RESTful API that allows users to create, retrieve, and update payment information. It provides endpoints for creating new payments, retrieving payment details by ID, retrieving all payments, and updating payment status.
+This guide will help you set up the development environment for this project.
 
-## Table of Contents
+## Prerequisites
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Database](#database)
-- [Kubernetes Deployment](#kubernetes-deployment)
-- [Contributing](#contributing)
-- [License](#license)
+Before you begin, ensure you have the following installed on your system:
 
-## Installation
+- **Node.js** (v16 or higher) - for JavaScript/TypeScript projects
+- **Python** (v3.8 or higher) - for Python projects
+- **Ruby** (v2.7 or higher) - for Ruby projects
+- **Java** (v11 or higher) - for Java projects
+- **Go** (v1.19 or higher) - for Go projects
+- **Docker** and **Docker Compose** - for containerized development
+- **Git** - for version control
 
-1. Clone the repository:
+## Environment Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
+
+### 2. Environment Variables
+
+Copy the example environment file and configure your local settings:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file and update the following variables:
+
+- `DATABASE_URL` - Database connection string
+- `API_KEY` - External API key for services
+- `SECRET_KEY` - Application secret key
+- `PORT` - Application port (default: 3000)
+- `NODE_ENV` - Environment mode (development/production)
+
+### 3. Dependencies Installation
+
+Depending on your project type, run the appropriate command:
+
+#### For Node.js/JavaScript Projects
+```bash
+npm install
+# or
+yarn install
+```
+
+#### For Python Projects
+```bash
+pip install -r requirements.txt
+# or for virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+#### For Ruby Projects
+```bash
+bundle install
+```
+
+#### For Java Projects
+```bash
+mvn clean install
+# or for Gradle
+./gradlew build
+```
+
+#### For Go Projects
+```bash
+go mod download
+go mod tidy
+```
+
+### 4. Docker Setup (Optional)
+
+If you prefer using Docker for development:
+
+```bash
+# Build and start services
+docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d
+
+# Stop services
+docker-compose down
+```
+
+### 5. Database Setup
+
+If your project uses a database:
+
+```bash
+# Run database migrations
+npm run migrate
+# or
+python manage.py migrate
+# or
+bundle exec rails db:migrate
+```
+
+```bash
+# Seed the database (if applicable)
+npm run seed
+# or
+python manage.py seed
+# or
+bundle exec rails db:seed
+```
+
+## Running the Application
+
+### Development Mode
+
+```bash
+# Node.js
+npm run dev
+# or
+yarn dev
+
+# Python (Django/Flask)
+python manage.py runserver
+# or
+flask run
+
+# Ruby on Rails
+bundle exec rails server
+
+# Java (Spring Boot)
+mvn spring-boot:run
+
+# Go
+go run main.go
+```
+
+### Production Mode
+
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
+
+## Testing
+
+Run the test suite to ensure everything is working correctly:
+
+```bash
+# Node.js
+npm test
+
+# Python
+python -m pytest
+# or
+python manage.py test
+
+# Ruby
+bundle exec rspec
+
+# Java
+mvn test
+
+# Go
+go test ./...
+```
+
+## Common Issues and Troubleshooting
+
+### Port Already in Use
+If you encounter a "port already in use" error:
+```bash
+# Find process using the port
+lsof -i :3000
+# Kill the process
+kill -9 <PID>
+```
+
+### Permission Issues
+If you encounter permission issues with npm/yarn:
+```bash
+# Fix npm permissions
+npm config set prefix ~/.npm-global
+export PATH=~/.npm-global/bin:$PATH
+```
+
+### Docker Issues
+If Docker containers fail to start:
+```bash
+# Clean up Docker resources
+docker-compose down -v
+docker system prune -f
+docker-compose up --build
+```
+
+### Database Connection Issues
+- Ensure your database server is running
+- Verify database credentials in `.env` file
+- Check if database exists and is accessible
+
+## Development Workflow
+
+1. Create a new branch for your feature:
+   ```bash
+   git checkout -b feature/your-feature-name
    ```
-   git clone https://github.com/your-username/payment-service.git
+
+2. Make your changes and test locally
+
+3. Run linting and formatting:
+   ```bash
+   npm run lint
+   npm run format
    ```
 
-2. Install dependencies:
-   ```
-   cd payment-service
-   npm install
-   ```
-
-3. Set up the PostgreSQL database:
-   - Make sure you have PostgreSQL installed and running.
-   - Update the database connection details in `app.js` if necessary.
-
-4. Start the server:
-   ```
-   npm start
+4. Commit your changes:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
    ```
 
-## Usage
+5. Push and create a pull request:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
 
-To use the Payment Service, you can send HTTP requests to the API endpoints using tools like cURL or Postman.
+## Additional Resources
 
-## API Endpoints
+- [Project Documentation](./docs/)
+- [API Documentation](./docs/api.md)
+- [Contributing Guidelines](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
 
-- `GET /`: Health check endpoint to verify the service is running.
-- `POST /payments`: Create a new payment.
-- `GET /payments/:id`: Retrieve payment details by ID.
-- `GET /payments`: Retrieve all payments.
-- `PATCH /payments/:id/status`: Update payment status.
-- `GET /health/db`: Check the health of the database connection.
+## Support
 
-For detailed information on request and response formats, refer to the API documentation.
+If you encounter any issues during setup, please:
 
-## Database
-
-The Payment Service uses a PostgreSQL database to store payment information. The database schema includes a `payments` table with the following columns:
-- `id`: Primary key (auto-generated)
-- `amount`: Payment amount (decimal)
-- `currency`: Payment currency (default: 'USD')
-- `status`: Payment status (default: 'pending')
-- `customer_id`: Customer ID associated with the payment
-- `created_at`: Timestamp of payment creation
-
-## Kubernetes Deployment
-
-The Payment Service can be deployed on a Kubernetes cluster using the provided configuration files:
-- `k8s/deployment.yaml`: Defines the Kubernetes Deployment for the Payment Service.
-- `k8s/service.yaml`: Defines the Kubernetes Service for the Payment Service.
-
-To deploy the Payment Service on a Kubernetes cluster, you can use tools like `kubectl` or `skaffold`.
-
-## Contributing
-
-Contributions to the Payment Service are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
-When contributing, please follow the existing code style and conventions. Make sure to test your changes thoroughly before submitting a pull request.
+1. Check this README for troubleshooting steps
+2. Search existing issues in the repository
+3. Create a new issue with detailed information about your problem
 
 ## License
 
-The Payment Service is open-source software licensed under the [MIT License](LICENSE).
-
----
-
-This README provides an overview of the Payment Service, including installation instructions, usage guidelines, API endpoints, database information, and deployment details. Feel free to customize and expand upon this template based on your project's specific requirements and additional features.
+This project is licensed under the [LICENSE](./LICENSE) file in the repository.
